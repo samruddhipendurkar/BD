@@ -1,18 +1,30 @@
 Create a folder and in that folder make 9 files/folders with names -> primary, secondary1, secondary2, server1, server2, server3, shard1, shard2, shard3
-mogoshard
+
+cd
+
+start mongod --port=50000 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\primary"
+start mongod --port=50001 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\secondary1"
+start mongod --port=50002 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\secondary2"
 
 mongosh --port=50000
 
-rs.initiate({_id:"Server1",members:[{_id:0, host:"localhost:50000"}, {_id:1, host:"localhost:50001"}, {_id:2, host:"localhost:50002"}]});
+mongod 
+rs.initiate({_id:"server1",members:[{_id:0, host:"localhost:50000"}, {_id:1, host:"localhost:50001"}, {_id:2, host:"localhost:50002"}]});
 
-mogoshard
+mongod  --configsvr --port=1030 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\server1"
+mongod  --configsvr --port=1040 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\server2"
+mongod  --configsvr --port=1050 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\server3"
 
 mongosh --host="localhost:1030"
 
 rs.initiate({_id:"Server1",configsvr:true,members:[{_id:0, host:"localhost:1030"}, {_id:1, host:"localhost:1040"}, {_id:2, host:"localhost:1050"}]})
 
-mogoshard
+mongod  --shardsvr --port=1130 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\shard1"
+mongod  --configsvr --port=1140 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\shard2"
+mongod  --configsvr --port=1150 --replSet="server1" --dbpath="C:\Users\Admin\OneDrive\Documents\sharding\shard3"
 
 mongosh --host="localhost:1130"
+rs.initiate({_id:"server1",members:[{_id:0, host:"localhost:1130"}, {_id:1, host:"localhost:1140"}, {_id:2, host:"localhost:1150"}]});
+
 
 rs.initiate({_id:"Server1", members: [{_id: 0, host: "localhost:1130"}, {_id: 1, host: "localhost:1140"}, {_id: 2, host: "localhost:1150"}]})
