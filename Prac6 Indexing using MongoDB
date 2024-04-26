@@ -1,7 +1,4 @@
--Indexes can be created using the createIndex() method or by specifying indexes in a document's schema 
-for collections using MongoDB's schema validation feature.
-
--Suppose the document is like
+Suppose the document is like
 	{
     _id: ObjectId('66104eb5704ada6a58271bda'),
     name: 'Everest',
@@ -13,11 +10,7 @@ for collections using MongoDB's schema validation feature.
       total: 5656
     }
 
-db.peaks.find(
-    { "height": { $gt: 8700 } }
-).explain("executionStats")
-This operation returns a lot of information. 
-
+db.peaks.find({ "height": { $gt: 8700 } }).explain("executionStats")
 
 — Creating a Single Field Index
 	db.peaks.createIndex( { "height": 1 } )
