@@ -1,5 +1,3 @@
-Create Person, City, and Hobby Nodes
-
 // Create Person nodes
 CREATE (:Person {name: 'Alice', age: 30})
 CREATE (:Person {name: 'Bob', age: 35})
@@ -15,9 +13,6 @@ CREATE (:Hobby {name: 'Reading'})
 CREATE (:Hobby {name: 'Hiking'})
 CREATE (:Hobby {name: 'Painting'})
 
-Define Relationships
-
-// Define relationships
 // Alice lives in London and likes Reading
 CREATE (alice)-[:LIVES_IN]->(london)
 CREATE (alice)-[:LIKES]->(reading)
@@ -30,11 +25,6 @@ CREATE (bob)-[:LIKES]->(hiking)
 CREATE (charlie)-[:LIVES_IN]->(paris)
 CREATE (charlie)-[:LIKES]->(painting)
 
-Added 9 labels, created 18 nodes, set 12 properties, created 6 relationships, completed after 6 ms.
-
- 
-
-Add New Nodes and Relationships
 // Create a new person
 CREATE (:Person {name: 'David', age: 25})
 
@@ -44,82 +34,66 @@ CREATE (:City {name: 'Berlin'})
 // Create a new hobby
 CREATE (:Hobby {name: 'Gardening'})
 
-// Create a relationship: David lives in Berlin and likes Gardening
+// Create a relationship
 CREATE (david)-[:LIVES_IN]->(berlin)
 CREATE (david)-[:LIKES]->(gardening)
-
-
-Added 3 labels, created 6 nodes, set 4 properties, created 2 relationships, completed after 21 ms.
- 
-
-Retrieve Data
 
 // Retrieve all persons
 MATCH (p:Person)
 RETURN p
 
- 
-
-
- 
-
 // Retrieve all cities
 MATCH (c:City)
 RETURN c
-
- 
- 
 
 // Retrieve all hobbies
 MATCH (h:Hobby)
 RETURN h
 
- 
-
-
- 
-
 MATCH (n)
 OPTIONAL MATCH (n)-[r]->(m)
 RETURN n, r, m
-
- 
-
- 
-
-Update Data
 
 // Update Alice's age
 MATCH (alice:Person {name: 'Alice'})
 SET alice.age = 31
 
-Set 3 properties, completed after 31 ms.
-
-Modify Relationships
-
 // Add a new hobby for Bob
 MATCH (bob:Person {name: 'Bob'})
 MERGE (hiking:Hobby {name: 'Hiking'})
 CREATE (bob)-[:LIKES]->(hiking)
-Created 9 relationships, completed after 26 ms.
 
-Delete Nodes and Relationships
-
-// Delete a specific person (e.g., David) and all relationships associated with them
+// Delete a specific person 
 MATCH (david:Person {name: 'David'})
 DETACH DELETE david
 
-Deleted 1 node, completed after 15 ms.
-
-// Delete a specific city (e.g., Berlin) and all relationships associated with it
+// Delete a specific city 
 MATCH (berlin:City {name: 'Berlin'})
 DETACH DELETE berlin
 
-Deleted 1 node, completed after 15 ms.
-
-
-// Delete a specific hobby (e.g., Gardening) and all relationships associated with it
+// Delete a specific hobby 
 MATCH (gardening:Hobby {name: 'Gardening'})
 DETACH DELETE gardening
 
-Deleted 1 node, completed after 17 ms.
+Part2
+data
+CREATE (:Person {name:
+'Alice', age: 25}),
+(:Person {name: 'Bob', age:
+30}),
+(:Person {name: 'Charlie',
+age: 35}),
+(:Person {name: 'David',
+age: 40}),
+(:Person {name: 'Emily',
+age: 22}),
+(:Person {name: 'Frank',
+age: 27}),
+(:Person {name: 'Grace',
+age: 33}),
+(:Person {name: 'Hannah',
+age: 28}),
+(:Person {name: 'Ivan', age:
+45}),
+(:Person {name: 'Jack', age:
+26})
