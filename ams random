@@ -1,0 +1,35 @@
+import random
+
+# AMS Algorithm Implementation
+def ams_algorithm(stream, x_values):
+    n = len(stream)
+
+    # Initialize the sum of square estimates
+    sum_squared_estimates = 0
+
+    # Perform the AMS estimate for each x_value
+    for x in x_values:
+        # Choose a random element r from the stream
+        r = stream[x - 1]  # x is 1-indexed, so we use x-1 for 0-indexed lists
+
+        # Count the number of times r appears in the stream
+        count_r = stream.count(r)
+
+        # Calculate the square of count_r and update the sum of square estimates
+        sum_squared_estimates += n * (2 * count_r - 1)
+
+    # Return the average of the square estimates
+    return sum_squared_estimates / len(x_values)
+
+# Generate a random stream of integers
+random_stream = [random.randint(1, 10) for _ in range(25)]
+
+# Given x values
+x_values = [1, 3, 5, 10]  # Values of x1, x2, x3, and x4 as 1, 3, 5, and 10
+
+# Calculate the surprise number using AMS algorithm on the random stream
+surprise_number = ams_algorithm(random_stream, x_values)
+
+# Output the result
+print("The random stream is:", random_stream)
+print("The surprise number (Second Frequency Moment Estimate) is:", surprise_number)
