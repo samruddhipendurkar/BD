@@ -1,0 +1,38 @@
+from collections import defaultdict
+
+# Greedy algorithm for bipartite matching
+class BipartiteMatcher:
+    def __init__(self, U, V, edges):
+        # U and V are the sets of vertices in the bipartite graph
+        # edges is a list of tuples representing edges between U and V
+        self.U = U
+        self.V = V
+        self.edges = edges
+        self.matching = set()
+        self.matched_U = set()
+        self.matched_V = set()
+
+    def greedy_match(self):
+        for u, v in self.edges:
+            # Check if both u and v are not already matched
+            if u not in self.matched_U and v not in self.matched_V:
+                # Add the edge to the matching
+                self.matching.add((u, v))
+                # Mark both vertices as matched
+                self.matched_U.add(u)
+                self.matched_V.add(v)
+
+        return self.matching
+
+# Define sets U and V
+U = {1, 2, 3, 4}  # Set U
+V = {'a', 'b', 'c', 'd'}  # Set V
+
+# List of edges between U and V
+edges = [(1, 'a'), (2, 'b'), (3, 'a'), (4, 'c'), (2, 'd')]
+
+# Create BipartiteMatcher object and find maximal matching
+matcher = BipartiteMatcher(U, V, edges)
+matching = matcher.greedy_match()
+
+print("Maximal Matching:", matching)
