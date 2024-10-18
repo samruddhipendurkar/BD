@@ -21,6 +21,7 @@ def ams_algorithm(stream, x_values):
     # Return the average of the square estimates
     return sum_squared_estimates / len(x_values)
 
+##IF RANDOM STREAM TO BE CHOSEN THEN
 # Generate a random stream of integers
 random_stream = [random.randint(1, 10) for _ in range(25)]
 
@@ -33,3 +34,17 @@ surprise_number = ams_algorithm(random_stream, x_values)
 # Output the result
 print("The random stream is:", random_stream)
 print("The surprise number (Second Frequency Moment Estimate) is:", surprise_number)
+##
+
+##
+#IF STREAM GIVEN THEN
+# Given stream and x values
+stream = [2, 3, 7, 1, 5, 8, 5, 7, 9, 6, 4, 4, 5, 6, 5, 8, 8, 5,2, 2, 2, 1, 1, 6, 7]
+x_values = [1, 3, 5, 10]  # Values of x1, x2, x3, and x4 as 1, 3, 5, and 10
+
+# Calculate the surprise number using AMS algorithm
+surprise_number = ams_algorithm(stream, x_values)
+
+# Output the result
+print("The surprise number (Second Frequency Moment Estimate) is:", surprise_number)
+##
