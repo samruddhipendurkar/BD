@@ -1,0 +1,75 @@
+!pip install pyspark
+
+# Import necessary modules
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType
+
+
+from pyspark.sql import SparkSession
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import Imputer, VectorAssembler
+from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+import pyspark.sql.types as tp
+
+# Create a Spark session
+spark = SparkSession.builder \
+    .appName("DiabetesPredictionPipeline") \
+    .getOrCreate()
+
+# Read the CSV file
+my_data = spark.read.csv('/content/diabaties.csv', header=True)
+
+# Define the schema for the data
+my_schema = tp.StructType([
+    tp.StructField(name='Pregnancies', dataType=tp.IntegerType(), nullable=True),
+    tp.StructField(name='Glucose', dataType=tp.IntegerType(), nullable=True),
+    tp.StructField(name='BloodPressure', dataType=tp.IntegerType(), nullable=True),
+    tp.StructField(name='SkinThickness', dataType=tp.IntegerType(), nullable=True),
+    tp.StructField(name='Insulin', dataType=tp.IntegerType(), nullable=True),
+    tp.StructField(name='BMI', dataType=tp.DoubleType(), nullable=True),
+    tp.StructField(name='DiabetesPedigreeFunction', dataType=tp.DoubleType(), nullable=True),
+    tp.StructField(name='Age', dataType=tp.IntegerType(), nullable=True),
+    tp.StructField(name='Outcome', dataType=tp.IntegerType(), nullable=True)
+])
+
+# Read the data again with the defined schema
+my_data = spark.read.csv('/content/diabaties.csv', schema=my_schema, header=True)
+
+# Print the schema
+my_data.printSchema()
+
+# Define stages for the pipeline
+imputer = Imputer(
+    inputCols=my_data.columns,
+    outputCols=["{}_imputed".format(c) for c in my_data.columns]
+).setStrategy("median")
+
+assembler = VectorAssembler(
+    inputCols=['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
+               'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'],
+    outputCol='features'
+)
+
+lr = LogisticRegression(featuresCol='features', labelCol='Outcome', maxIter=10)
+
+# Create the pipeline
+pipeline = Pipeline(stages=[imputer, assembler, lr])
+
+# Split the data into training and test sets
+xtrain, xtest = my_data.randomSplit([0.7, 0.3])
+
+# Fit the pipeline on training data
+pipeline_model = pipeline.fit(xtrain)
+
+# Make predictions on the test data
+predictions = pipeline_model.transform(xtest)
+
+# Evaluate the model
+evaluator = MulticlassClassificationEvaluator(labelCol="Outcome", predictionCol="prediction")
+accuracy = evaluator.evaluate(predictions, {evaluator.metricName: "accuracy"})
+
+print(f"Accuracy: {accuracy}")
+
+# Stop the Spark session
+spark.stop()
