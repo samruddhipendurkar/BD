@@ -1,0 +1,37 @@
+class BloomFilter:
+    def __init__(self, size):
+        self.size = size
+        self.bit_array = [0] * size
+
+    def hash1(self, x):
+        return (x + 1) % self.size
+
+    def hash2(self, x):
+        return (2 * x + 5) % self.size
+
+    def add(self, x):
+        index1 = self.hash1(x)
+        index2 = self.hash2(x)
+        self.bit_array[index1] = 1
+        self.bit_array[index2] = 1
+
+    def check(self, x):
+        index1 = self.hash1(x)
+        index2 = self.hash2(x)
+        return self.bit_array[index1] == 1 and self.bit_array[index2] == 1
+
+# Initialize Bloom filter
+bloom_filter = BloomFilter(13)
+
+# Add elements 8, 17, 25, 14, 20 to the Bloom filter
+elements_to_add = [8, 17, 25, 14, 20]
+for elem in elements_to_add:
+    bloom_filter.add(elem)
+
+# Check for integers 7 and 5
+check_elements = [7, 5]
+for elem in check_elements:
+    if bloom_filter.check(elem):
+        print(f"Element {elem} may be in the set.")
+    else:
+        print(f"Element {elem} is definitely not in the set.")
