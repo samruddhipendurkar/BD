@@ -1,0 +1,95 @@
+import pandas as pd
+
+def k_shingles(text, k):
+    words = text.split()
+    shingles = set()
+    for i in range(len(words) - k + 1):
+        shingle = ' '.join(words[i:i + k])
+        shingles.add(shingle)
+    return shingles
+
+# Define the hash functions
+def hash_function_1(x):
+    return (3 * x + 5) % 554
+
+def hash_function_2(x):
+    return (7 * x + 4) % 554
+
+def hash_function_3(x):
+    return (3 * x + 1) % 554
+
+# File paths
+file_paths = [
+    "/content/shingle1.txt",
+    "/content/shingle2.txt",
+    "/content/shingle3.txt"
+]
+
+# Token size
+k = 5
+
+# Dictionary to hold shingles for each file
+shingle_dict = {}
+
+# Process each file
+for file_path in file_paths:
+    with open(file_path, 'r') as file:
+        content = file.read()
+
+    shingles = k_shingles(content, k)
+    shingle_dict[file_path] = shingles
+
+# Create a set of all unique shingles across all files
+all_shingles = list(set.union(*[set(shingles) for shingles in shingle_dict.values()]))
+
+# Initialize an incidence matrix
+incidence_matrix = pd.DataFrame(0, index=all_shingles, columns=file_paths)
+
+# Populate the incidence matrix
+for file_path, shingles in shingle_dict.items():
+    for shingle in shingles:
+        incidence_matrix.at[shingle, file_path] = 1
+
+# Function to compute signatures
+def compute_signature(incidence_matrix):
+    signatures = {file_path: [] for file_path in incidence_matrix.columns}
+
+    for shingle in incidence_matrix.index:
+        # Use the index of the shingle in the all_shingles list
+        index = list(incidence_matrix.index).index(shingle)
+
+        for file_path in incidence_matrix.columns:
+            # Calculate hash values
+            hash_value = [
+                hash_function_1(index),
+                hash_function_2(index),
+                hash_function_3(index)
+            ]
+            # Append hash values if the shingle is present in the file
+            if incidence_matrix.at[shingle, file_path] == 1:
+                signatures[file_path].append(hash_value)
+
+    # Find the minimum hash value for each hash function per file
+    final_signatures = {}
+    for file_path, values in signatures.items():
+        if values:  # If there are any values
+            final_signatures[file_path] = [
+                min(value[0] for value in values),  # Min for Hash1
+                min(value[1] for value in values),  # Min for Hash2
+                min(value[2] for value in values)   # Min for Hash3
+            ]
+        else:
+            final_signatures[file_path] = [None, None, None]  # Handle case with no shingles
+
+    return pd.DataFrame(final_signatures, index=['Hash1', 'Hash2', 'Hash3']).T
+
+# Compute signatures
+signature_matrix = compute_signature(incidence_matrix)
+
+# Display the incidence matrix and signature matrix
+print("Incidence Matrix:")
+print(incidence_matrix)
+
+print("\nSignature Matrix:")
+print(signature_matrix)
+
